@@ -14,13 +14,13 @@ def swap(vetor, a, b):
     vetor[a] = vetor[b]
     vetor[b] = aux
 
-# Retorna uma vetor aleatório de tamanho size + 1 (a posição 0 não é usada no heap)
+# Retorna uma vetor aleatório
 # Um vetor sem valores repetidos demora muito mais para ser criado
 def random_list(size, max_value=None, repeat=True):
 	if max_value == None or max_value < size:
 		max_value = 10*size
 
-	lista = [0]
+	lista = []
 
 	i = 0
 	while i < size:
@@ -69,12 +69,29 @@ def min_heapify(vetor, i): # i = indice do vetor v[i]
 
     return vetor
 
+def pop_heap(heap):
+    swap(heap, 0, len(heap)-1)
+    value = heap[len(heap)-1]
+
+    del(heap[len(heap)-1])
+
+    if len(heap) > 1:
+        min_heapify(heap, (len(heap)//2)-1)
+
+    return value
+
+def heap_sort(vetor):
+    min_heapify(vetor, (len(vetor)//2)-1)
+
+    vetor_ordenado = []
+    while vetor != []:
+        vetor_ordenado.append(pop_heap(vetor))
+
+    return vetor_ordenado
+
 z = random_list(10)
-print('vetor = \t\t', z[1:])
 
-zi = copy(z)
-za = min_heapify(z, (len(z)//2)-1)
-heapq.heapify(zi)
-
-print('heapq.heapify() = \t', zi[1:])
-print('min_heapify() = \t', za[1:])
+print('vetor:')
+print(z)
+print('ordenado com heap sort:')
+print(heap_sort(z))
