@@ -75,18 +75,18 @@ def build(vetor, heap_type='min'):
         i -= 1
 
 def pop_heap(heap):
+    value = heap[0]
     swap(heap, 0, len(heap)-1)
-    value = heap[len(heap)-1]
 
     del(heap[len(heap)-1])
 
     if len(heap) > 1:
-        min_heapify(heap, (len(heap)//2)-1)
+        build(heap, heap_type='min')
 
     return value
 
 def heap_sort(vetor):
-    min_heapify(vetor, (len(vetor)//2)-1)
+    build(vetor, heap_type='min')
 
     vetor_ordenado = []
     while vetor != []:
@@ -174,4 +174,9 @@ print('max_heap')
 build(max_h, heap_type='max')
 print(max_h)
 test_max_heap(max_h)
+print('-'*25)
+
+print('vetor ordenado')
+ordenado = heap_sort(z)
+print(ordenado)
 print('-'*25)
