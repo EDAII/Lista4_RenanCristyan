@@ -5,9 +5,9 @@
 
 # Heap Sort
 
+from time import sleep
 from random import randint
 from copy import copy
-import heapq
 
 def swap(vetor, a, b):
     aux = vetor[a]
@@ -36,38 +36,43 @@ def random_list(size, max_value=None, repeat=True):
 
 	return lista
 
-def min_heapify(vetor, i): # i = indice do vetor v[i]
-    # Considerar o caso que só tem o nó da esquerda:
-    if 2*i+2 >= len(vetor):
-        l, li = vetor[2*i+1], 2*i+1    
-        menor, menori = l, li
+def max_heapify(vetor, i):
+    maior = i
+    l = 2*i+1
+    r = 2*i+2
 
-    else:
-        l, li = vetor[2*i+1], 2*i+1
-        r, ri = vetor[2*i+2], 2*i+2
-        menor, menori = -1, -1
+    if l < len(vetor) and vetor[l] > vetor[maior]:
+        maior = l
+    
+    if r < len(vetor) and vetor[r] > vetor[maior]:
+        maior = r
 
-        if l < r:
-            menor = l
-            menori = li
-        else:
-            menor = r
-            menori = ri
+    if maior != i:
+        swap(vetor, i, maior)
+        max_heapify(vetor, maior)
 
-    if menor < vetor[i]:
-        swap(vetor, i, menori)
-        
-        if 2*menori+2 >= len(vetor):
-            if menori < len(vetor)//2:
-                if vetor[menori] > vetor[2*menori+1]:
-                    min_heapify(vetor, menori)
-        elif vetor[menori] > vetor[2*menori+1] or vetor[menori] > vetor[2*menori+2]:
-            min_heapify(vetor, menori)
+def min_heapify(vetor, i):
+    menor = i
+    l = 2*i+1
+    r = 2*i+2
 
-    if i != 0:
-        min_heapify(vetor, i-1)
+    if l < len(vetor) and vetor[l] < vetor[menor]:
+        menor = l
+    
+    if r < len(vetor) and vetor[r] < vetor[menor]:
+        menor = r
 
-    return vetor
+    if menor != i:
+        swap(vetor, i, menor)
+        min_heapify(vetor, menor)
+
+def build(vetor, heap_type='min'):
+    i = (len(vetor)//2)-1
+
+    while i >= 0:
+        if heap_type == 'min': min_heapify(vetor, i)
+        if heap_type == 'max': max_heapify(vetor, i)
+        i -= 1
 
 def pop_heap(heap):
     swap(heap, 0, len(heap)-1)
@@ -89,9 +94,84 @@ def heap_sort(vetor):
 
     return vetor_ordenado
 
-z = random_list(10)
+def test_max_heap(heap, prints=False):
+    i = 0
+
+    while i < len(heap)//2:
+        parent  = heap[i]
+        left_c  = heap[i*2+1]
+        if i*2+2 < len(heap):
+            right_c = heap[i*2+2]
+        else:
+            right_c = None
+
+        if prints:
+            if right_c != None:
+                print('parent = {}, left_c = {}, right_c = {}'.format(parent, left_c, right_c))
+            else:
+                print('parent = {}, left_c = {}'.format(parent, left_c))
+        else:
+            try:
+                if right_c != None:
+                    assert parent >= left_c and parent >= right_c
+                else:
+                    assert parent >= left_c
+            except AssertionError:
+                print('MAX HEAP ERROR')
+                print('p = {}, l = {}, r = {}'.format(parent, left_c, right_c))
+                exit(1)
+        
+        i += 1
+
+    print('MAX HEAP OK')
+
+def test_min_heap(heap, prints=False):
+    i = 0
+
+    while i < len(heap)//2:
+        parent  = heap[i]
+        left_c  = heap[i*2+1]
+        if i*2+2 < len(heap):
+            right_c = heap[i*2+2]
+        else:
+            right_c = None
+
+        if prints:
+            if right_c != None:
+                print('parent = {}, left_c = {}, right_c = {}'.format(parent, left_c, right_c))
+            else:
+                print('parent = {}, left_c = {}'.format(parent, left_C))
+        else:
+            try:
+                if right_c != None:
+                    assert parent <= left_c and parent <= right_c
+                else:
+                    assert parent <= left_c
+            except AssertionError:
+                print('MIN HEAP ERROR')
+                print('p = {}, l = {}, r = {}'.format(parent, left_c, right_c))
+                exit(1)
+        
+        i += 1
+    
+    print('MIN HEAP OK')
+
+z = random_list(16)
+min_h = copy(z)
+max_h = copy(z)
 
 print('vetor:')
 print(z)
-print('ordenado com heap sort:')
-print(heap_sort(z))
+print('-'*25)
+
+print('min_heap')
+build(min_h, heap_type='min')
+print(min_h)
+test_min_heap(min_h)
+print('-'*25)
+
+print('max_heap')
+build(max_h, heap_type='max')
+print(max_h)
+test_max_heap(max_h)
+print('-'*25)
