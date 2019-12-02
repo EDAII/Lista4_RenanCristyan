@@ -5,7 +5,7 @@
 
 # Heap Sort
 
-from time import sleep
+from time import time
 from random import randint
 from copy import copy
 
@@ -81,18 +81,28 @@ def pop_heap(heap):
     del(heap[len(heap)-1])
 
     if len(heap) > 1:
-        build(heap, heap_type='min')
+        min_heapify(heap, 0)
+        # pass
 
     return value
 
-def heap_sort(vetor):
+def heap_sort(vetor, print_vetor=True, show_exec_time=False):
+    start = time()
+
     build(vetor, heap_type='min')
 
     vetor_ordenado = []
     while vetor != []:
         vetor_ordenado.append(pop_heap(vetor))
 
-    return vetor_ordenado
+    finish = time()
+    test_ord(vetor_ordenado)
+
+    if print_vetor: print(vetor_ordenado)
+
+    if show_exec_time:
+        print('heap_sort ordenou {} elementos em:\n{} segundos'
+              .format(len(vetor_ordenado), finish - start))
 
 def test_max_heap(heap, prints=False):
     i = 0
@@ -156,27 +166,35 @@ def test_min_heap(heap, prints=False):
     
     print('MIN HEAP OK')
 
-z = random_list(16)
+def test_ord(vetor):
+    x = 1
+    while x < len(vetor):
+        if vetor[x] < vetor[x-1]:
+            raise Exception('ERRO DE ORDENAÇÃO')
+        x += 1
+    print('ORDENAÇÃO OK')
+    return True
+
+z = random_list(100000)
 min_h = copy(z)
 max_h = copy(z)
 
 print('vetor:')
-print(z)
+# print(z)
 print('-'*25)
 
 print('min_heap')
 build(min_h, heap_type='min')
-print(min_h)
+# print(min_h)
 test_min_heap(min_h)
 print('-'*25)
 
 print('max_heap')
 build(max_h, heap_type='max')
-print(max_h)
+# print(max_h)
 test_max_heap(max_h)
 print('-'*25)
 
 print('vetor ordenado')
-ordenado = heap_sort(z)
-print(ordenado)
+heap_sort(z, print_vetor=False, show_exec_time=True)
 print('-'*25)
